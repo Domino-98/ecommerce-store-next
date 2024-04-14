@@ -2,26 +2,63 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+:root,
+.light {
+  --background-color-50: 248 250 252;
+  --background-color-100: 241 245 249;
+  --background-color-200: 226 232 240;
+  --background-color-300: 203 213 225;
+  --background-color-400: 148 163 184;
+  --background-color-500: 100 116 139;
+  --background-color-600: 71 85 105;
+  --background-color-700: 51 65 85;
+  --background-color-800: 30 41 59;
+  --background-color-900: 15 23 42;
+}
+
+.dark {
+  --background-color-50: 15 23 42;
+  --background-color-100: 30 41 59;
+  --background-color-200: 51 65 85;
+  --background-color-300: 71 85 105;
+  --background-color-400: 100 116 139;
+  --background-color-500: 148 163 184;
+  --background-color-600: 203 213 225;
+  --background-color-700: 226 232 240;
+  --background-color-800: 241 245 249;
+  --background-color-900: 248 250 252;
 }
 
 /* @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --background-color-50: 15 23 42;
+    --background-color-100: 30 41 59;
+    --background-color-200: 51 65 85;
+    --background-color-300: 71 85 105;
+    --background-color-400: 100 116 139;
+    --background-color-500: 148 163 184;
+    --background-color-600: 203 213 225;
+    --background-color-700: 226 232 240;
+    --background-color-800: 241 245 249;
+    --background-color-900: 248 250 252;
   }
 } */
 
 body {
-  color: rgb(var(--foreground-rgb));
+  @apply bg-surface1 text-primary;
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  .form-group {
+    @apply flex flex-col gap-1 mb-2 last:mb-0;
+  }
+  .form-input {
+    @apply bg-surface2 rounded px-3 py-2;
+  }
+  .btn {
+    @apply flex px-5 py-2 rounded shadow-sm hover:bg-surface3;
+  }
+  .btn-primary {
+    @apply bg-blue-500 text-white hover:bg-blue-600 transition-all;
   }
 }

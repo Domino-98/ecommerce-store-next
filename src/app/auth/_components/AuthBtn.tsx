@@ -8,7 +8,10 @@ export default function AuthBtn({
 }) {
   return (
     <>
-      <button onClick={() => signIn(provider.id, { callbackUrl: "/" })}>
+      <button
+        type="button"
+        onClick={() => signIn(provider.id, { callbackUrl: "/" })}
+        className="px-4 py-2 btn bg-surface2 text-sm">
         Sign in with {provider.name}
       </button>
     </>

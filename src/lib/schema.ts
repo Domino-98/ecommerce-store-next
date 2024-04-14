@@ -4,14 +4,19 @@ import {
     text,
     primaryKey,
     integer,
+    pgEnum,
 } from "drizzle-orm/pg-core"
 import type { AdapterAccount } from "@auth/core/adapters"
 
+export const userRoles = pgEnum('role', ['USER', 'ADMIN']);
+
 export const users = pgTable("user", {
-    id: text("id").notNull().primaryKey(),
+    id: text("id").notNull().primaryKey().unique().$defaultFn(() => crypto.randomUUID()),
     name: text("name"),
     email: text("email").notNull(),
     emailVerified: timestamp("emailVerified", { mode: "date" }),
+    password: text("password"),
+    role: userRoles("role").notNull().default("USER"),
     image: text("image"),
 })
 
