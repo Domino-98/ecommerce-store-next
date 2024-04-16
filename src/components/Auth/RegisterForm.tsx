@@ -1,14 +1,13 @@
-import { useEffect, useState, useTransition } from "react";
-import { signup } from "../_actions/signup";
+import { useState, useTransition } from "react";
 import Link from "next/link";
 import FormInput from "@/components/Form/Input";
-import { useFormState } from "react-dom";
 import Submit from "@/components/Form/Submit";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { userSignupSchema } from "@/lib/validationSchema";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { signup } from "@/actions/signup";
 
 type AuthInputs = {
   email: string;

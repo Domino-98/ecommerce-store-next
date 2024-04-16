@@ -1,5 +1,4 @@
-import AuthBtn from "@/app/auth/_components/AuthBtn";
-import { useEffect, useState } from "react";
+import { PropsWithChildren, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -8,6 +7,7 @@ import Submit from "@/components/Form/Submit";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { userSigninSchema } from "@/lib/validationSchema";
+import AuthBtn from "./AuthBtn";
 
 type AuthInputs = {
   email: string;
@@ -15,7 +15,9 @@ type AuthInputs = {
   confirmPassword?: string;
 };
 
-export default function LoginForm() {
+export default function LoginForm({
+  isAdmin = false,
+}: PropsWithChildren<{ isAdmin?: boolean }>) {
   const [error, setError] = useState<string>("");
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,15 +40,18 @@ export default function LoginForm() {
       const response = await signIn("credentials", {
         email,
         password,
+        type: "admin",
         redirect: false,
       });
       if (!response?.error) {
-        router.push("/");
+        isAdmin ? router.push("/admin/dashboard") : router.push("/");
       } else {
         setError("error");
+        setTimeout(() => setError(""), 5000);
       }
     } catch (err) {
       setError("error");
+      setTimeout(() => setError(""), 5000);
       console.log({ err });
     } finally {
       setIsSubmitting(false);
@@ -88,17 +93,24 @@ export default function LoginForm() {
       />
       <Submit disabled={isSubmitting}>Sign In</Submit>
 
-      <div className="flex gap-3 mt-5">
-        <AuthBtn provider={{ id: "github", name: "GitHub" }} />
-        <AuthBtn provider={{ id: "google", name: "Google" }} />
-      </div>
+      {!isAdmin && (
+        <>
+          <div className="flex gap-3 mt-5">
+            <AuthBtn provider={{ id: "github", name: "GitHub" }} />
+            <AuthBtn provider={{ id: "google", name: "Google" }} />
+          </div>
 
-      <div className="mt-4 text-center text-sm">
-        Don't have an account?{" "}
-        <Link href={{ query: { type: "signup" } }} className="text-blue-500">
-          Sign up
-        </Link>
-      </div>
+          <div className="mt-4 text-center text-sm">
+            Don't have an account?{" "}
+            <Link
+              href={{ query: { type: "signup" } }}
+              className="text-blue-500"
+            >
+              Sign up
+            </Link>
+          </div>
+        </>
+      )}
     </form>
   );
 }

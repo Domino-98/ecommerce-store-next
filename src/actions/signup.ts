@@ -1,9 +1,8 @@
 "use server"
 
+import { hashPassword } from "@/lib/auth/hashPassword";
 import { db } from "@/lib/db"
-import { redirect } from "next/navigation"
 import { users } from "@/lib/schema"
-import { hashPassword } from "../_lib/hashPassword"
 import { userSignupSchema } from "@/lib/validationSchema"
 
 export async function signup(formData: FormData) {

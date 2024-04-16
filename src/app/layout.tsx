@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import SessionProvider from "@/components/SessionProvider";
 import { auth } from "@/lib/auth";
-import Navbar from "@/components/Navbar";
 import { Roboto } from "next/font/google";
 
 const roboto = Roboto({
@@ -28,7 +27,6 @@ export default async function RootLayout({
     <html lang="en" className={roboto.className}>
       <body>
         <SessionProvider session={session}>
-          <Navbar />
           {children}
         </SessionProvider>
       </body>

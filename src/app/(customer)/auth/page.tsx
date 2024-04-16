@@ -1,8 +1,8 @@
+import Auth from "@/components/Auth/Auth";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import Auth from "./_components/Auth";
 
-export default async function LoginPage() {
+export default async function AuthPage() {
   const session = await auth();
 
   if (session) redirect("/");

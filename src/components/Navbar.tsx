@@ -1,31 +1,39 @@
 "use client";
 import { signOut, useSession } from "next-auth/react";
-import Link from "next/link";
-import Auth from "@/app/auth/page";
+import NavLink from "./NavLink";
 
-export default function Navbar() {
+export function Navbar() {
   const { data: session } = useSession();
+  const isAdmin = session?.user.role === "ADMIN";
 
   return (
-    <nav className="flex justify-center shadow-md p-4 bg-surface1">
-      <ul className="flex justify-center gap-6">
+    <nav className="flex justify-center bg-gray-900">
+      <ul className="flex justify-center">
         <li>
-          <Link href="/">Home</Link>
+          <NavLink href={{ pathname: "/" }}>Home</NavLink>
         </li>
+        {isAdmin && (
+          <li>
+            <NavLink href={{ pathname: "/admin/dashboard" }}>Dashboard</NavLink>
+          </li>
+        )}
         {!session && (
           <li>
-            <Link
-              href={{
-                pathname: "/auth",
-                query: { type: "login" },
-              }}>
-              Login
-            </Link>
+            {!session && (
+              <NavLink href={{ pathname: "/auth", query: "type=login" }}>
+                Login
+              </NavLink>
+            )}
           </li>
         )}
         {session && (
           <li>
-            <button onClick={() => signOut()}>Logout</button>
+            <button
+              onClick={() => signOut()}
+              className="p-4 text-white block hover:bg-surface1 hover:text-black"
+            >
+              Logout
+            </button>
           </li>
         )}
       </ul>
