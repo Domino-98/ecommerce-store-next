@@ -40,7 +40,7 @@ export default function LoginForm({
       const response = await signIn("credentials", {
         email,
         password,
-        type: "admin",
+        type: isAdmin ? "admin" : "user",
         redirect: false,
       });
       if (!response?.error) {

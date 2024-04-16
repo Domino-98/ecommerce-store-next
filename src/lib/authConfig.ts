@@ -73,10 +73,5 @@ export default {
             console.log({ session })
             return session;
         },
-        async signIn({ user, account, profile, email, credentials }) {
-            console.log({ user })
-
-            return true;
-        },
     }
 } satisfies NextAuthConfig
