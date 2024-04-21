@@ -3,11 +3,11 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import FormInput from "@/components/Form/Input";
-import Submit from "@/components/Form/Submit";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { userSigninSchema } from "@/lib/validationSchema";
 import AuthBtn from "./AuthBtn";
+import Action from "../Action";
 
 type AuthInputs = {
   email: string;
@@ -69,7 +69,7 @@ export default function LoginForm({
 
   return (
     <form onSubmit={handleSubmit(processForm)}>
-      <h1 className="text-center text-3xl mb-5 font-bold text-blue-500">
+      <h1 className="text-center text-3xl mb-5 font-bold text-indigo-500">
         Sign In
       </h1>
       {error && (
@@ -81,6 +81,7 @@ export default function LoginForm({
         name="email"
         label="E-mail"
         type="email"
+        icon="Mail"
         register={register}
         error={errors.email}
       />
@@ -88,23 +89,33 @@ export default function LoginForm({
         name="password"
         label="Password"
         type="password"
+        icon="Lock"
         register={register}
         error={errors.password}
+        isPassword={true}
       />
-      <Submit disabled={isSubmitting}>Sign In</Submit>
+      <Action
+        btnType="button"
+        type="submit"
+        variant="primary"
+        className="mx-auto mt-4"
+        disabled={isSubmitting}
+      >
+        Sign In
+      </Action>
 
       {!isAdmin && (
         <>
-          <div className="flex gap-3 mt-5">
+          <div className="text-with-lines mt-2">or</div>
+          <div className="flex flex-col md:flex-row gap-3 mt-2">
             <AuthBtn provider={{ id: "github", name: "GitHub" }} />
             <AuthBtn provider={{ id: "google", name: "Google" }} />
           </div>
-
           <div className="mt-4 text-center text-sm">
             Don't have an account?{" "}
             <Link
               href={{ query: { type: "signup" } }}
-              className="text-blue-500"
+              className="text-indigo-500"
             >
               Sign up
             </Link>

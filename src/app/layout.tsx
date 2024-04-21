@@ -26,9 +26,7 @@ export default async function RootLayout({
   return (
     <html lang="en" className={roboto.className}>
       <body>
-        <SessionProvider session={session}>
-          {children}
-        </SessionProvider>
+        <SessionProvider session={session}>{children}</SessionProvider>
       </body>
     </html>
   );

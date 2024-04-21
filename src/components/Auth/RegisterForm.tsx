@@ -1,13 +1,13 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import FormInput from "@/components/Form/Input";
-import Submit from "@/components/Form/Submit";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { userSignupSchema } from "@/lib/validationSchema";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { signup } from "@/actions/signup";
+import Action from "../Action";
 
 type AuthInputs = {
   email: string;
@@ -60,7 +60,7 @@ export default function RegisterForm() {
 
   return (
     <form onSubmit={handleSubmit(processForm)}>
-      <h1 className="text-center text-3xl mb-5 font-bold text-blue-500">
+      <h1 className="text-center text-3xl mb-5 font-bold text-indigo-500">
         Sign Up
       </h1>
       {error && (
@@ -72,6 +72,7 @@ export default function RegisterForm() {
         name="email"
         label="E-mail"
         type="email"
+        icon="Mail"
         register={register}
         error={errors.email}
       />
@@ -79,21 +80,33 @@ export default function RegisterForm() {
         name="password"
         label="Password"
         type="password"
+        icon="Lock"
         register={register}
         error={errors.password}
+        isPassword={true}
       />
       <FormInput
         name="confirmPassword"
         label="Confirm password"
         type="password"
+        icon="Lock"
         register={register}
         error={errors.confirmPassword}
+        isPassword={true}
       />
-      <Submit disabled={isPending}>Sign Up</Submit>
+      <Action
+        btnType="button"
+        type="submit"
+        variant="primary"
+        className="mx-auto mt-4"
+        disabled={isPending}
+      >
+        Sign Up
+      </Action>
 
       <div className="mt-4 text-center text-sm">
         Already have an account?{" "}
-        <Link href={{ query: { type: "login" } }} className="text-blue-500">
+        <Link href={{ query: { type: "login" } }} className="text-indigo-500">
           Sign in
         </Link>
       </div>

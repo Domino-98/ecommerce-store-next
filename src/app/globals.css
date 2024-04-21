@@ -50,18 +50,20 @@ body {
 
 @layer utilities {
   .form-group {
-    @apply flex flex-col gap-1 mb-2 last:mb-0;
+    @apply relative flex flex-col gap-1 mb-2 last:mb-0;
   }
   .form-input {
-    @apply bg-surface2 rounded px-3 py-2;
+    @apply bg-surface2 rounded px-3 py-2 w-full;
   }
-  .btn {
-    @apply flex px-5 py-2 rounded shadow-sm hover:bg-surface3;
+  .line {
+    @apply after:bg-gray-500 after:h-px w-full;
   }
-  .btn-primary {
-    @apply bg-blue-500 text-white hover:bg-blue-600 transition-all;
+  .text-with-lines {
+    @apply relative flex items-center gap-2 text-sm;
   }
-  .btn-primary-outline {
-    @apply border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white transition-all;
+  .text-with-lines::before,
+  .text-with-lines::after {
+    content: "";
+    @apply bg-gray-300 h-px w-full;
   }
 }

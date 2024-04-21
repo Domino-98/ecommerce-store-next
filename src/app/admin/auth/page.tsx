@@ -1,6 +1,6 @@
+import Action from "@/components/Action";
 import Auth from "@/components/Auth/Auth";
 import { auth } from "@/lib/auth";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export default async function LoginPage() {
@@ -14,9 +14,14 @@ export default async function LoginPage() {
         <Auth isAdmin={true} />
       </div>
 
-      <Link href={{ pathname: "/" }} className="btn btn-primary-outline mt-10">
+      <Action
+        btnType="link"
+        href={{ pathname: "/" }}
+        variant="primary-outline"
+        className="mt-10"
+      >
         Shop
-      </Link>
+      </Action>
     </div>
   );
 }

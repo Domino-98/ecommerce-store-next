@@ -13,7 +13,7 @@ export default function Auth({
   console.log({ isAdmin });
 
   return (
-    <div className="mt-10 shadow-lg bg-surface rounded-lg p-8 max-w-[400px] w-full">
+    <div className="mt-10 shadow-lg bg-surface rounded-lg p-4 md:p-8 max-w-[400px] w-full">
       {authType === "login" || isAdmin ? (
         <LoginForm isAdmin={isAdmin} />
       ) : (
