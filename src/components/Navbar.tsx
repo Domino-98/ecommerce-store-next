@@ -1,10 +1,24 @@
-"use client";
-import { signOut, useSession } from "next-auth/react";
 import NavLink from "./NavLink";
+import { logout } from "@/actions/logout";
+import { validateRequest } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { toast } from "sonner";
 
-export function Navbar() {
-  const { data: session } = useSession();
-  const isAdmin = session?.user.role === "ADMIN";
+export async function Navbar() {
+  const { user, session } = await validateRequest();
+
+  const isAdmin = user?.role === "ADMIN";
+
+  async function handleLogout() {
+    "use server";
+    const res = await logout();
+    if (res?.error) {
+      toast.error(res.error);
+      console.error(res.error);
+    } else {
+      redirect("/auth?type=login");
+    }
+  }
 
   return (
     <nav className="flex justify-center bg-gray-900">
@@ -28,12 +42,14 @@ export function Navbar() {
         )}
         {session && (
           <li>
-            <button
-              onClick={() => signOut()}
-              className="p-4 text-white block hover:bg-surface1 hover:text-black"
-            >
-              Logout
-            </button>
+            <form action={handleLogout}>
+              <button
+                type="submit"
+                className="p-4 text-white block hover:bg-surface1 hover:text-black"
+              >
+                Logout
+              </button>
+            </form>
           </li>
         )}
       </ul>

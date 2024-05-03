@@ -1,10 +1,9 @@
 import Auth from "@/components/Auth/Auth";
-import { auth } from "@/lib/auth";
+import { validateRequest } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
 export default async function AuthPage() {
-  const session = await auth();
-
+  const { session } = await validateRequest();
   if (session) redirect("/");
 
   return (

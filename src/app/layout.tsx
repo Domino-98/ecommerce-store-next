@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import SessionProvider from "@/components/SessionProvider";
-import { auth } from "@/lib/auth";
 import { Roboto } from "next/font/google";
+import { Toaster } from "sonner";
 
 const roboto = Roboto({
   weight: ["400", "700"],
@@ -21,12 +20,11 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth();
-
   return (
     <html lang="en" className={roboto.className}>
       <body>
-        <SessionProvider session={session}>{children}</SessionProvider>
+        {children}
+        <Toaster richColors position="bottom-center" />
       </body>
     </html>
   );

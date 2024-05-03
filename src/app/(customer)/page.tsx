@@ -1,9 +1,9 @@
-import { auth } from "@/lib/auth";
+import { validateRequest } from "@/lib/auth";
 
 export default async function HomePage() {
-  const session = await auth();
+  const { user } = await validateRequest();
 
-  console.log({ session });
+  console.log({ user });
 
   return (
     <main className="mt-10">

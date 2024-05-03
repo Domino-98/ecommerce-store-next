@@ -1,5 +1,4 @@
-import { PropsWithChildren, useState } from "react";
-import { signIn } from "next-auth/react";
+import { PropsWithChildren, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import FormInput from "@/components/Form/Input";
@@ -8,6 +7,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { userSigninSchema } from "@/lib/validationSchema";
 import AuthBtn from "./AuthBtn";
 import Action from "../Action";
+import { signin } from "@/actions/signin";
+import { toast } from "sonner";
 
 type AuthInputs = {
   email: string;
@@ -18,9 +19,8 @@ type AuthInputs = {
 export default function LoginForm({
   isAdmin = false,
 }: PropsWithChildren<{ isAdmin?: boolean }>) {
-  const [error, setError] = useState<string>("");
   const router = useRouter();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   const {
     register,
@@ -32,31 +32,16 @@ export default function LoginForm({
   });
 
   async function handleSignIn(formData: FormData) {
-    const email = formData.get("email");
-    const password = formData.get("password");
-
-    setIsSubmitting(true);
-    try {
-      const response = await signIn("credentials", {
-        email,
-        password,
-        type: isAdmin ? "admin" : "user",
-        redirect: false,
-      });
-      if (!response?.error) {
-        isAdmin ? router.push("/admin/dashboard") : router.push("/");
+    startTransition(async () => {
+      const res = await signin(formData, isAdmin);
+      if (res?.error) {
+        toast.error(res.error);
       } else {
-        setError("error");
-        setTimeout(() => setError(""), 5000);
+        toast.success("You are successfully logged in!");
+        isAdmin ? router.push("/admin/dashboard") : router.push("/");
       }
-    } catch (err) {
-      setError("error");
-      setTimeout(() => setError(""), 5000);
-      console.log({ err });
-    } finally {
-      setIsSubmitting(false);
       reset();
-    }
+    });
   }
 
   const processForm: SubmitHandler<AuthInputs> = async (data) => {
@@ -72,11 +57,6 @@ export default function LoginForm({
       <h1 className="text-center text-3xl mb-5 font-bold text-indigo-500">
         Sign In
       </h1>
-      {error && (
-        <div className="py-2 px-4 mb-3 text-white rounded font-medium text-center bg-red-500">
-          Invalid credentials!
-        </div>
-      )}
       <FormInput
         name="email"
         label="E-mail"
@@ -95,11 +75,11 @@ export default function LoginForm({
         isPassword={true}
       />
       <Action
-        btnType="button"
+        actiontype="button"
         type="submit"
         variant="primary"
         className="mx-auto mt-4"
-        disabled={isSubmitting}
+        disabled={isPending}
       >
         Sign In
       </Action>

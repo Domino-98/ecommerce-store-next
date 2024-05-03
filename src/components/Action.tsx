@@ -4,7 +4,7 @@ import { PropsWithChildren } from "react";
 
 type BaseProps = {
   children: React.ReactNode;
-  variant: "primary" | "primary-outline";
+  variant?: "primary" | "primary-outline";
   className?: string;
   onClick?: () => void;
 };
@@ -12,10 +12,10 @@ type BaseProps = {
 type ActionProps = BaseProps &
   (
     | (React.ButtonHTMLAttributes<HTMLButtonElement> & {
-        btnType: "button";
+        actiontype: "button";
       })
     | (LinkProps & {
-        btnType: "link";
+        actiontype: "link";
       })
   );
 
@@ -35,13 +35,9 @@ export default function Action({
       variant === "primary-outline",
   };
 
-  if (props.btnType === "link") {
+  if (props.actiontype === "link") {
     return (
-      <Link
-        {...props}
-        href="/"
-        className={clsx(classNames, variants, className)}
-      >
+      <Link {...props} className={clsx(classNames, variants, className)}>
         {children}
       </Link>
     );

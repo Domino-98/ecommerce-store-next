@@ -1,12 +1,12 @@
 import Action from "@/components/Action";
 import Auth from "@/components/Auth/Auth";
-import { auth } from "@/lib/auth";
+import { validateRequest } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
 export default async function LoginPage() {
-  const session = await auth();
+  const { user } = await validateRequest();
 
-  if (session?.user.role === "ADMIN") redirect("/admin/dashboard");
+  if (user?.role === "ADMIN") redirect("/admin/dashboard");
 
   return (
     <div className="mt-10 flex flex-col items-center">
@@ -15,7 +15,7 @@ export default async function LoginPage() {
       </div>
 
       <Action
-        btnType="link"
+        actiontype="link"
         href={{ pathname: "/" }}
         variant="primary-outline"
         className="mt-10"

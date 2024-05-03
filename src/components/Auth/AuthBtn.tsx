@@ -1,12 +1,17 @@
 "use client";
-import { AppProvider } from "next-auth/providers";
-import { signIn } from "next-auth/react";
+import {
+  createGithubAuthorizationURL,
+  createGoogleAuthorizationURL,
+} from "@/actions/signin-provider";
 import Image from "next/image";
+import { toast } from "sonner";
 
-type ProviderProps = Partial<AppProvider>;
-
-export default function AuthBtn({ provider }: { provider: ProviderProps }) {
-  function getIcon(providerId: AppProvider["id"]) {
+export default function AuthBtn({
+  provider,
+}: {
+  provider: { id: "github" | "google"; name: string };
+}) {
+  function getIcon(providerId = "") {
     switch (providerId) {
       case "google":
         return "/providers/google-icon.svg";
@@ -17,11 +22,29 @@ export default function AuthBtn({ provider }: { provider: ProviderProps }) {
     }
   }
 
+  async function handleSigninProvider() {
+    if (provider?.id === "google") {
+      const response = await createGoogleAuthorizationURL();
+      if (response.error) {
+        toast.error(response.error);
+      } else if (response.success) {
+        window.location.href = response.data;
+      }
+    } else if (provider?.id === "github") {
+      const response = await createGithubAuthorizationURL();
+      if (response.error) {
+        toast.error(response.error);
+      } else if (response.success) {
+        window.location.href = response.data;
+      }
+    }
+  }
+
   return (
     <>
       <button
         type="button"
-        onClick={() => signIn(provider.id, { callbackUrl: "/" })}
+        onClick={handleSigninProvider}
         className="grow flex justify-center gap-2 items-center px-4 py-2 bg-surface2 hover:bg-surface3 text-sm rounded-md transition-all"
       >
         {getIcon(provider?.id!) && (
