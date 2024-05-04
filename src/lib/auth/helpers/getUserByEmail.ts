@@ -1,4 +1,4 @@
-import { db } from "@/lib/db";
+import { db } from "@/lib/database/db";
 
 export async function getUserByEmail(email: string) {
     const user = await db.query.userTable.findFirst({

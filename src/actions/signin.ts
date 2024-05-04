@@ -43,6 +43,13 @@ export async function signin(formData: FormData, isAdmin?: boolean) {
             }
         }
 
+        if (!user.isEmailVerified) {
+            return {
+                error: "Please verify your email address.",
+                key: "emailVerification"
+            }
+        }
+
         console.log({ user, isAdmin })
 
         if (user.role === "USER" && isAdmin) {

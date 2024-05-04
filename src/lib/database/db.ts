@@ -1,7 +1,7 @@
 import pg from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
 import * as schema from './schema';
-import config from "./config";
+import config from "../config";
 
 let sslmode = "";
 if (config.APP_ENV === "prod") {

@@ -1,11 +1,12 @@
 import { github } from "@/lib/auth/oauth";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server"
-import { db } from "@/lib/db";
-import { oauthAccountTable, userTable } from "@/lib/schema";
+import { db } from "@/lib/database/db";
+import { oauthAccountTable, userTable } from "@/lib/database/schema";
 import { eq } from "drizzle-orm";
 import { lucia } from "@/lib/auth";
 import { generateId } from "lucia";
+import { getUserByEmail } from "@/lib/auth/helpers/getUserByEmail";
 
 interface GitHubUser {
     id: string;
@@ -60,17 +61,13 @@ export async function GET(req: NextRequest, res: NextResponse) {
             githubEmail = primaryEmail;
         }
 
-        console.log({ githubEmail })
-
-        console.log({ githubData })
-
-        const user = await db.query.userTable.findFirst({
-            where: eq(userTable.email, githubEmail)
-        });
+        const user = await getUserByEmail(githubEmail);
 
         let userId = user?.id;
 
         await db.transaction(async (db) => {
+            let oauthAccountExists: boolean = false;
+
             if (!user) {
                 const generatedUserId = generateId(15);
 
@@ -85,23 +82,25 @@ export async function GET(req: NextRequest, res: NextResponse) {
 
                 userId = generatedUserId;
 
-                console.log({ createdUser })
-
                 if (createdUser.length === 0) {
                     db.rollback();
                     return Response.json({ error: "An error occurred. Please try again later." }, { status: 500 });
                 }
-
-                await createOAuthAccount(accessToken, githubData.id, userId as string);
             } else {
-                const oauthAccount = await db.query.oauthAccountTable.findFirst({
+                oauthAccountExists = !!(await db.query.oauthAccountTable.findFirst({
                     where: eq(oauthAccountTable.id, githubData.id)
+                }));
+            }
+
+            if (!oauthAccountExists) {
+                await db.insert(oauthAccountTable).values({
+                    accessToken,
+                    id: githubData.id,
+                    provider: "github",
+                    providerUserId: githubData.id,
+                    userId: userId as string
                 });
-
-                if (!oauthAccount) {
-                    await createOAuthAccount(accessToken, githubData.id, userId as string);
-                }
-
+            } else {
                 const updatedOAuthAccountRes = await db.update(oauthAccountTable).set({
                     accessToken,
                 }).where(eq(oauthAccountTable.id, githubData.id));
@@ -117,8 +116,8 @@ export async function GET(req: NextRequest, res: NextResponse) {
             expiresIn: 60 * 60 * 24 * 30 // 30 days
         });
         const sessionCookie = lucia.createSessionCookie(session.id);
-        cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 
+        cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
         cookies().set("state", "", {
             expires: new Date(0),
         })
@@ -130,14 +129,4 @@ export async function GET(req: NextRequest, res: NextResponse) {
         console.error(err);
         return Response.json({ error: err.message }, { status: 500 });
     }
-}
-
-async function createOAuthAccount(accessToken: string, providerId: string, userId: string) {
-    await db.insert(oauthAccountTable).values({
-        accessToken,
-        id: providerId,
-        provider: "github",
-        providerUserId: providerId,
-        userId,
-    });
 }

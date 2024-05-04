@@ -3,11 +3,14 @@
 import { lucia } from "@/lib/auth";
 import { getUserByEmail } from "@/lib/auth/helpers/getUserByEmail";
 import { hashPassword } from "@/lib/auth/helpers/hashPassword";
-import { db } from "@/lib/db";
-import { userTable } from "@/lib/schema";
+import { db } from "@/lib/database/db";
+import { emailVerificationTable, userTable } from "@/lib/database/schema";
 import { userSignupSchema } from "@/lib/validationSchema"
 import { generateId } from "lucia";
 import { cookies } from "next/headers";
+import jwt from "jsonwebtoken";
+import config from "@/lib/config";
+import { sendEmail } from "@/lib/email";
 
 export async function signup(formData: FormData) {
     const email = formData.get("email") as string;
@@ -29,9 +32,9 @@ export async function signup(formData: FormData) {
     }
 
     try {
-        const userExists = await getUserByEmail(email);
+        const user = await getUserByEmail(email);
 
-        if (userExists) {
+        if (user && user.password) {
             return {
                 error: "Email already exists."
             }
@@ -40,11 +43,25 @@ export async function signup(formData: FormData) {
         const userId = generateId(15);
         const hashedPassword = await hashPassword(password);
 
-        await db.insert(userTable).values({ id: userId, email, password: hashedPassword });
+        const createdUser = await db.insert(userTable).values({ id: userId, email, password: hashedPassword }).onConflictDoUpdate({
+            target: userTable.email,
+            set: { password: hashedPassword },
+        }).returning({
+            id: userTable.id
+        });
 
-        const session = await lucia.createSession(userId, {});
-        const sessionCookie = lucia.createSessionCookie(session.id);
-        cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+        const codeId = generateId(15);
+        const code = Math.random().toString(36).substring(2, 15);
+
+        await db.insert(emailVerificationTable).values({ id: codeId, userId: createdUser[0].id, code, sentAt: new Date() });
+
+        const token = jwt.sign({ email, userId: createdUser[0].id, code }, config.JWT_SECRET as string, {
+            expiresIn: "5m"
+        });
+
+        const url = `${config.NEXT_PUBLIC_BASE_URL}/api/verify-email?token=${token}`;
+
+        await sendEmail(email, "Verify your email", `Click <a href="${url}">here</a> to verify your email.`);
     } catch (err) {
         console.error(err);
         return {

@@ -1,11 +1,12 @@
 import { google } from "@/lib/auth/oauth";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server"
-import { db } from "@/lib/db";
-import { oauthAccountTable, userTable } from "@/lib/schema";
+import { db } from "@/lib/database/db";
+import { oauthAccountTable, userTable } from "@/lib/database/schema";
 import { eq } from "drizzle-orm";
 import { lucia } from "@/lib/auth";
 import { generateId } from "lucia";
+import { getUserByEmail } from "@/lib/auth/helpers/getUserByEmail";
 
 interface GoogleUser {
     id: string;
@@ -52,13 +53,13 @@ export async function GET(req: NextRequest, res: NextResponse) {
 
         console.log({ googleData })
 
-        const user = await db.query.userTable.findFirst({
-            where: eq(userTable.email, googleData.email)
-        });
+        const user = await getUserByEmail(googleData.email);
 
         let userId = user?.id;
 
         await db.transaction(async (db) => {
+            let oauthAccountExists: boolean = false;
+
             if (!user) {
                 const generatedUserId = generateId(15);
 
@@ -73,32 +74,36 @@ export async function GET(req: NextRequest, res: NextResponse) {
 
                 userId = generatedUserId;
 
-                console.log({ createdUser })
-
                 if (createdUser.length === 0) {
                     db.rollback();
                     return Response.json({ error: "An error occurred. Please try again later." }, { status: 500 });
                 }
-
-                await createOAuthAccount(accessToken, accessTokenExpiresAt, refreshToken as string, googleData.id, userId);
             } else {
-                const oauthAccount = await db.query.oauthAccountTable.findFirst({
+                oauthAccountExists = !!(await db.query.oauthAccountTable.findFirst({
                     where: eq(oauthAccountTable.id, googleData.id)
+                }));
+            }
+
+            if (!oauthAccountExists) {
+                await db.insert(oauthAccountTable).values({
+                    accessToken,
+                    expiresAt: accessTokenExpiresAt,
+                    id: googleData.id,
+                    provider: "google",
+                    providerUserId: googleData.id,
+                    userId: userId as string,
+                    refreshToken
                 });
+            } else {
+                const updatedOAuthAccountRes = await db.update(oauthAccountTable).set({
+                    accessToken,
+                    expiresAt: accessTokenExpiresAt,
+                    refreshToken
+                }).where(eq(oauthAccountTable.id, googleData.id));
 
-                if (!oauthAccount) {
-                    await createOAuthAccount(accessToken, accessTokenExpiresAt, refreshToken as string, googleData.id, userId as string);
-                } else {
-                    const updatedOAuthAccountRes = await db.update(oauthAccountTable).set({
-                        accessToken,
-                        expiresAt: accessTokenExpiresAt,
-                        refreshToken
-                    }).where(eq(oauthAccountTable.id, googleData.id));
-
-                    if (updatedOAuthAccountRes.rowCount === 0) {
-                        db.rollback();
-                        return Response.json({ error: "An error occurred. Please try again later." }, { status: 500 });
-                    }
+                if (updatedOAuthAccountRes.rowCount === 0) {
+                    db.rollback();
+                    return Response.json({ error: "An error occurred. Please try again later." }, { status: 500 });
                 }
             }
         });
@@ -112,7 +117,6 @@ export async function GET(req: NextRequest, res: NextResponse) {
         cookies().set("state", "", {
             expires: new Date(0),
         })
-
         cookies().set("codeVerifier", "", {
             expires: new Date(0),
         })
@@ -124,16 +128,4 @@ export async function GET(req: NextRequest, res: NextResponse) {
         console.error(err);
         return Response.json({ error: err.message }, { status: 500 });
     }
-}
-
-async function createOAuthAccount(accessToken: string, expiresAt: Date, refreshToken: string, providerId: string, userId: string) {
-    await db.insert(oauthAccountTable).values({
-        accessToken,
-        expiresAt,
-        id: providerId,
-        provider: "google",
-        providerUserId: providerId,
-        userId: userId as string,
-        refreshToken
-    });
 }

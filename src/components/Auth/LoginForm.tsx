@@ -1,4 +1,10 @@
-import { PropsWithChildren, useState, useTransition } from "react";
+import {
+  PropsWithChildren,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import FormInput from "@/components/Form/Input";
@@ -9,6 +15,8 @@ import AuthBtn from "./AuthBtn";
 import Action from "../Action";
 import { signin } from "@/actions/signin";
 import { toast } from "sonner";
+import { resendVerificationEmail } from "@/actions/resend-verification-email";
+import { useCountdown } from "usehooks-ts";
 
 type AuthInputs = {
   email: string;
@@ -21,11 +29,34 @@ export default function LoginForm({
 }: PropsWithChildren<{ isAdmin?: boolean }>) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [needsVerification, setNeedsVeritfication] = useState(false);
+  const [count, { startCountdown, resetCountdown }] = useCountdown({
+    countStart: 60,
+    intervalMs: 1000,
+  });
+
+  async function handleVerificationEmail() {
+    const email = getValues().email;
+    const res = await resendVerificationEmail(email);
+    if (res?.error) {
+      toast.error(res.error);
+      return;
+    }
+    toast.success("Verification email sent.");
+    startCountdown();
+  }
+
+  useEffect(() => {
+    if (count === 0) {
+      resetCountdown();
+    }
+  }, [count]);
 
   const {
     register,
     handleSubmit,
     reset,
+    getValues,
     formState: { errors },
   } = useForm<{ email: string; password: string; confirmPassword?: string }>({
     resolver: zodResolver(userSigninSchema),
@@ -34,13 +65,20 @@ export default function LoginForm({
   async function handleSignIn(formData: FormData) {
     startTransition(async () => {
       const res = await signin(formData, isAdmin);
+
+      res?.key === "emailVerification"
+        ? setNeedsVeritfication(true)
+        : setNeedsVeritfication(false);
+
       if (res?.error) {
         toast.error(res.error);
       } else {
         toast.success("You are successfully logged in!");
         isAdmin ? router.push("/admin/dashboard") : router.push("/");
       }
-      reset();
+      if (res?.key !== "emailVerification") {
+        reset();
+      }
     });
   }
 
@@ -74,6 +112,18 @@ export default function LoginForm({
         error={errors.password}
         isPassword={true}
       />
+      {needsVerification && (
+        <Action
+          onClick={handleVerificationEmail}
+          actiontype="button"
+          type="button"
+          variant="primary-outline"
+          className="mx-auto mt-4 text-sm"
+          disabled={isPending || (count > 0 && count < 60)}
+        >
+          Send verification email {count > 0 && count < 60 && `in ${count}s`}
+        </Action>
+      )}
       <Action
         actiontype="button"
         type="submit"

@@ -34,8 +34,10 @@ export default function RegisterForm() {
       if (res?.error) {
         toast.error(res.error);
       } else {
-        toast.success("You have successfully registered and logged in.");
-        router.push("/");
+        toast.success(
+          "You have successfully registered. We've sent you a verification email."
+        );
+        router.push("/auth?type=login");
       }
     });
   }
