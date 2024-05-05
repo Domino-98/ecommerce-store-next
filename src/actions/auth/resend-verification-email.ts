@@ -1,6 +1,6 @@
 "use server";
 
-import { getUserByEmail } from "@/lib/auth/helpers/getUserByEmail";
+import { getUserByEmail } from "@/lib/auth/helpers/getUser";
 import { db } from "@/lib/database/db";
 import { emailVerificationTable } from "@/lib/database/schema";
 import jwt from "jsonwebtoken";

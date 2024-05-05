@@ -1,57 +1,65 @@
-import { useTransition } from "react";
+import { useEffect, useTransition } from "react";
 import Link from "next/link";
 import FormInput from "@/components/Form/Input";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { userSignupSchema } from "@/lib/validationSchema";
-import { useRouter } from "next/navigation";
-import { signup } from "@/actions/auth/signup";
+import { userEmailSchema } from "@/lib/validationSchema";
 import Action from "../Action";
 import { toast } from "sonner";
+import { createResetPasswordToken } from "@/actions/auth/create-reset-password-token";
+import { useCountdown } from "usehooks-ts";
 
 type AuthInputs = {
   email: string;
-  password: string;
-  confirmPassword: string;
 };
 
-export default function RegisterForm() {
+export default function ForgotPasswordForm() {
   const [isPending, startTransition] = useTransition();
-
-  const router = useRouter();
+  const [count, { startCountdown, resetCountdown }] = useCountdown({
+    countStart: 60,
+    intervalMs: 1000,
+  });
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<AuthInputs>({
-    resolver: zodResolver(userSignupSchema),
+    resolver: zodResolver(userEmailSchema),
   });
 
-  function handleSignUp(formData: FormData) {
+  function handleResetPassword(formData: FormData) {
+    const email = formData.get("email") as string;
+
     startTransition(async () => {
-      const res = await signup(formData);
+      const res = await createResetPasswordToken(email);
       if (res?.error) {
         toast.error(res.error);
       } else {
         toast.success(res.success);
-        router.push("/auth?type=login");
+        startCountdown();
       }
     });
   }
+
+  useEffect(() => {
+    if (count === 0) {
+      resetCountdown();
+    }
+  }, [count]);
 
   const processForm: SubmitHandler<AuthInputs> = async (data) => {
     let formData = new FormData();
     for (let [key, val] of Object.entries(data)) {
       formData.append(key, val);
     }
-    handleSignUp(formData);
+    handleResetPassword(formData);
   };
 
   return (
     <form onSubmit={handleSubmit(processForm)}>
       <h1 className="text-center text-3xl mb-5 font-bold text-indigo-500">
-        Sign Up
+        Forgot password
       </h1>
       <FormInput
         name="email"
@@ -61,38 +69,23 @@ export default function RegisterForm() {
         register={register}
         error={errors.email}
       />
-      <FormInput
-        name="password"
-        label="Password"
-        type="password"
-        icon="Lock"
-        register={register}
-        error={errors.password}
-        isPassword={true}
-      />
-      <FormInput
-        name="confirmPassword"
-        label="Confirm password"
-        type="password"
-        icon="Lock"
-        register={register}
-        error={errors.confirmPassword}
-        isPassword={true}
-      />
       <Action
         actiontype="button"
         type="submit"
         variant="primary"
         className="mx-auto mt-4"
-        disabled={isPending}
+        disabled={isPending || (count > 0 && count < 60)}
       >
-        Sign Up
+        Send Email {count > 0 && count < 60 && `in ${count}s`}
       </Action>
 
-      <div className="mt-4 text-center text-sm">
-        Already have an account?{" "}
+      <div className="flex gap-2 mt-4 justify-center">
         <Link href={{ query: { type: "login" } }} className="text-indigo-500">
           Sign in
+        </Link>
+        /
+        <Link href={{ query: { type: "signup" } }} className="text-indigo-500">
+          Sign up
         </Link>
       </div>
     </form>

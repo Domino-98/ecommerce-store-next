@@ -1,10 +1,4 @@
-import {
-  PropsWithChildren,
-  useEffect,
-  useRef,
-  useState,
-  useTransition,
-} from "react";
+import { PropsWithChildren, useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import FormInput from "@/components/Form/Input";
@@ -13,9 +7,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { userSigninSchema } from "@/lib/validationSchema";
 import AuthBtn from "./AuthBtn";
 import Action from "../Action";
-import { signin } from "@/actions/signin";
+import { signin } from "@/actions/auth/signin";
 import { toast } from "sonner";
-import { resendVerificationEmail } from "@/actions/resend-verification-email";
+import { resendVerificationEmail } from "@/actions/auth/resend-verification-email";
 import { useCountdown } from "usehooks-ts";
 
 type AuthInputs = {
@@ -42,7 +36,7 @@ export default function LoginForm({
       toast.error(res.error);
       return;
     }
-    toast.success("Verification email sent.");
+    toast.success(res.success);
     startCountdown();
   }
 
@@ -73,7 +67,7 @@ export default function LoginForm({
       if (res?.error) {
         toast.error(res.error);
       } else {
-        toast.success("You are successfully logged in!");
+        toast.success(res.success);
         isAdmin ? router.push("/admin/dashboard") : router.push("/");
       }
       if (res?.key !== "emailVerification") {
@@ -112,6 +106,13 @@ export default function LoginForm({
         error={errors.password}
         isPassword={true}
       />
+      <button
+        type="button"
+        onClick={() => router.push("/auth?type=reset")}
+        className="text-gray-700 underline hover:text-indigo-700 text-sm flex ml-auto"
+      >
+        Forgot password?
+      </button>
       {needsVerification && (
         <Action
           onClick={handleVerificationEmail}

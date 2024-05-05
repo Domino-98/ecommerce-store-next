@@ -3,6 +3,7 @@ import { useSearchParams } from "next/navigation";
 import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
 import { PropsWithChildren } from "react";
+import ForgotPasswordForm from "./ForgotPasswordForm";
 
 export default function Auth({
   isAdmin = false,
@@ -14,6 +15,8 @@ export default function Auth({
     <div className="mt-10 shadow-lg bg-surface rounded-lg p-4 md:p-8 max-w-[400px] w-full">
       {authType === "login" || isAdmin ? (
         <LoginForm isAdmin={isAdmin} />
+      ) : authType === "reset" ? (
+        <ForgotPasswordForm />
       ) : (
         <RegisterForm />
       )}

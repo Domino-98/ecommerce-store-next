@@ -1,5 +1,5 @@
 import NavLink from "./NavLink";
-import { logout } from "@/actions/logout";
+import { logout } from "@/actions/auth/logout";
 import { validateRequest } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { toast } from "sonner";

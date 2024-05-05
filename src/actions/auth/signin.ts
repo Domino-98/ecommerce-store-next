@@ -1,7 +1,7 @@
 "use server"
 
 import { lucia, validateRequest } from "@/lib/auth";
-import { getUserByEmail } from "@/lib/auth/helpers/getUserByEmail";
+import { getUserByEmail } from "@/lib/auth/helpers/getUser";
 import { userSigninSchema } from "@/lib/validationSchema"
 import { cookies } from "next/headers";
 import { verifyPassword } from "@/lib/auth/helpers/verifyPassword";
@@ -69,6 +69,10 @@ export async function signin(formData: FormData, isAdmin?: boolean) {
         })
         const sessionCookie = lucia.createSessionCookie(session.id);
         cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+
+        return {
+            success: "Logged in successfully!"
+        }
     } catch (err) {
         console.error(err);
         return {

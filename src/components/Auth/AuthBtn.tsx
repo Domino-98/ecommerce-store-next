@@ -2,7 +2,7 @@
 import {
   createGithubAuthorizationURL,
   createGoogleAuthorizationURL,
-} from "@/actions/signin-provider";
+} from "@/actions/auth/signin-provider";
 import Image from "next/image";
 import { toast } from "sonner";
 

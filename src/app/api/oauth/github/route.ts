@@ -6,7 +6,7 @@ import { oauthAccountTable, userTable } from "@/lib/database/schema";
 import { eq } from "drizzle-orm";
 import { lucia } from "@/lib/auth";
 import { generateId } from "lucia";
-import { getUserByEmail } from "@/lib/auth/helpers/getUserByEmail";
+import { getUserByEmail } from "@/lib/auth/helpers/getUser";
 
 interface GitHubUser {
     id: string;

@@ -7,7 +7,7 @@ if (config.APP_ENV === "production") {
 }
 
 export default defineConfig({
-    schema: "./src/lib/schema.ts",
+    schema: "./src/lib/database/schema.ts",
     out: "./drizzle",
     driver: "pg",
     dbCredentials: {

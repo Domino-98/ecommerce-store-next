@@ -1,13 +1,11 @@
 "use server"
 
-import { lucia } from "@/lib/auth";
-import { getUserByEmail } from "@/lib/auth/helpers/getUserByEmail";
+import { getUserByEmail } from "@/lib/auth/helpers/getUser";
 import { hashPassword } from "@/lib/auth/helpers/hashPassword";
 import { db } from "@/lib/database/db";
 import { emailVerificationTable, userTable } from "@/lib/database/schema";
 import { userSignupSchema } from "@/lib/validationSchema"
 import { generateId } from "lucia";
-import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import config from "@/lib/config";
 import { sendEmail } from "@/lib/email";
@@ -62,6 +60,10 @@ export async function signup(formData: FormData) {
         const url = `${config.NEXT_PUBLIC_BASE_URL}/api/verify-email?token=${token}`;
 
         await sendEmail(email, "Verify your email", `Click <a href="${url}">here</a> to verify your email.`);
+
+        return {
+            success: "You have successfully registered. We've sent you a verification email."
+        }
     } catch (err) {
         console.error(err);
         return {

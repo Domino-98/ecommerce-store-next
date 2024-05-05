@@ -22,6 +22,20 @@ export const emailVerificationTable = pgTable("email_verification", {
     }).notNull()
 });
 
+export const passwordResetTokenTable = pgTable("password_reset_token", {
+    id: text("id").primaryKey(),
+    userId: text("user_id").notNull().references(() => userTable.id),
+    token: text("token").notNull(),
+    sentAt: timestamp("sent_at", {
+        withTimezone: true,
+        mode: "date",
+    }).notNull(),
+    expiresAt: timestamp("expires_at", {
+        withTimezone: true,
+        mode: "date"
+    }).notNull()
+});
+
 export const oauthAccountTable = pgTable("oauth_account", {
     id: text("id").primaryKey(),
     userId: text("user_id").notNull().references(() => userTable.id),
