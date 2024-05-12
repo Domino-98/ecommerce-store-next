@@ -4,11 +4,11 @@ import { getUserByEmail } from "@/lib/auth/helpers/getUser";
 import { hashPassword } from "@/lib/auth/helpers/hashPassword";
 import { db } from "@/lib/database/db";
 import { emailVerificationTable, userTable } from "@/lib/database/schema";
-import { userSignupSchema } from "@/lib/validationSchema"
 import { generateId } from "lucia";
 import jwt from "jsonwebtoken";
 import config from "@/lib/config";
 import { sendEmail } from "@/lib/email";
+import { userSignupSchema } from "@/lib/auth/validation-schemas";
 
 export async function signup(formData: FormData) {
     const email = formData.get("email") as string;

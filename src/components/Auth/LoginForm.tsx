@@ -4,13 +4,13 @@ import Link from "next/link";
 import FormInput from "@/components/Form/Input";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { userSigninSchema } from "@/lib/validationSchema";
 import AuthBtn from "./AuthBtn";
 import Action from "../Action";
 import { signin } from "@/actions/auth/signin";
 import { toast } from "sonner";
 import { resendVerificationEmail } from "@/actions/auth/resend-verification-email";
 import { useCountdown } from "usehooks-ts";
+import { userSigninSchema } from "@/lib/auth/validation-schemas";
 
 type AuthInputs = {
   email: string;

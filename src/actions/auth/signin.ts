@@ -2,10 +2,10 @@
 
 import { lucia, validateRequest } from "@/lib/auth";
 import { getUserByEmail } from "@/lib/auth/helpers/getUser";
-import { userSigninSchema } from "@/lib/validationSchema"
 import { cookies } from "next/headers";
 import { verifyPassword } from "@/lib/auth/helpers/verifyPassword";
 import { logout } from "./logout";
+import { userSigninSchema } from "@/lib/auth/validation-schemas";
 
 export async function signin(formData: FormData, isAdmin?: boolean) {
     const email = formData.get("email") as string;

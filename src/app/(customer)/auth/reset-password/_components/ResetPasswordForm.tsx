@@ -4,11 +4,11 @@ import { useTransition } from "react";
 import FormInput from "@/components/Form/Input";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { userResetPasswordSchema } from "@/lib/validationSchema";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Action from "@/components/Action";
 import { resetPassword } from "../_actions/reset-password";
+import { userResetPasswordSchema } from "@/lib/auth/validation-schemas";
 
 type AuthInputs = {
   newPassword: string;

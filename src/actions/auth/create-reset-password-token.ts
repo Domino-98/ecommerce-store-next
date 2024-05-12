@@ -2,12 +2,12 @@
 
 import { eq } from 'drizzle-orm';
 import { db } from "@/lib/database/db";
-import { userEmailSchema } from "@/lib/validationSchema";
 import { passwordResetTokenTable } from '@/lib/database/schema';
 import { getUserByEmail } from '@/lib/auth/helpers/getUser';
 import { generateId } from 'lucia';
 import config from '@/lib/config';
 import { sendEmail } from '@/lib/email';
+import { userEmailSchema } from '@/lib/auth/validation-schemas';
 
 export async function createResetPasswordToken(email: string) {
     const validation = userEmailSchema.safeParse({

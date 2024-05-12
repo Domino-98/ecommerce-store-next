@@ -2,11 +2,11 @@
 
 import { and, eq } from 'drizzle-orm';
 import { db } from "@/lib/database/db";
-import { userResetPasswordSchema } from "@/lib/validationSchema";
 import { passwordResetTokenTable, userTable } from '@/lib/database/schema';
 import { getUserById } from '@/lib/auth/helpers/getUser';
 import { hashPassword } from '@/lib/auth/helpers/hashPassword';
 import { canResetPassword } from '../_lib/canResetPassword';
+import { userResetPasswordSchema } from '@/lib/auth/validation-schemas';
 
 export async function resetPassword(formData: FormData, userId: string, token: string) {
     const newPassword = formData.get("newPassword") as string;

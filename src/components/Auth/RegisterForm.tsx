@@ -3,11 +3,11 @@ import Link from "next/link";
 import FormInput from "@/components/Form/Input";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { userSignupSchema } from "@/lib/validationSchema";
 import { useRouter } from "next/navigation";
 import { signup } from "@/actions/auth/signup";
 import Action from "../Action";
 import { toast } from "sonner";
+import { userSignupSchema } from "@/lib/auth/validation-schemas";
 
 type AuthInputs = {
   email: string;

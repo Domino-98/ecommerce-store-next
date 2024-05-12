@@ -3,11 +3,11 @@ import Link from "next/link";
 import FormInput from "@/components/Form/Input";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { userEmailSchema } from "@/lib/validationSchema";
 import Action from "../Action";
 import { toast } from "sonner";
 import { createResetPasswordToken } from "@/actions/auth/create-reset-password-token";
 import { useCountdown } from "usehooks-ts";
+import { userEmailSchema } from "@/lib/auth/validation-schemas";
 
 type AuthInputs = {
   email: string;
