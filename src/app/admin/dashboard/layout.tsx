@@ -1,6 +1,7 @@
 import { validateRequest } from "@/lib/auth";
-import Sidebar from "../_components/Sidebar";
+import Sidenav from "../_components/Sidenav";
 import { redirect } from "next/navigation";
+import Topbar from "../_components/Topbar";
 
 export default async function AdminLayout({
   children,
@@ -13,8 +14,13 @@ export default async function AdminLayout({
 
   return (
     <main className="flex">
-      <Sidebar />
-      <div className="flex flex-col flex-1 p-10">{children}</div>
+      <Sidenav />
+      <div className="flex flex-col flex-1">
+        <Topbar />
+        <div className="px-4 sm:px-6 md:px-8 lg:px-10 py-4 sm:py-6">
+          {children}
+        </div>
+      </div>
     </main>
   );
 }

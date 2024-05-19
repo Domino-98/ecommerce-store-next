@@ -4,6 +4,7 @@
 
 :root,
 .light {
+  --background-color-0: 255 255 255;
   --background-color-50: 248 250 252;
   --background-color-100: 241 245 249;
   --background-color-200: 226 232 240;
@@ -17,6 +18,7 @@
 }
 
 .dark {
+  --background-color-0: 0 0 0;
   --background-color-50: 15 23 42;
   --background-color-100: 30 41 59;
   --background-color-200: 51 65 85;
@@ -45,7 +47,7 @@
 } */
 
 body {
-  @apply bg-surface1 text-primary;
+  @apply bg-surface2 text-primary;
 }
 
 @layer utilities {

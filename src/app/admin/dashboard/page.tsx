@@ -1,9 +1,14 @@
-import Topbar from "../_components/Topbar";
+import { Metadata } from "next";
+import PageTitle from "../_components/PageTitle";
+
+export const metadata: Metadata = {
+  title: "Dashboard",
+};
 
 export default async function DashboardPage() {
   return (
     <>
-      <Topbar title="Dashboard" />
+      <PageTitle>Dashboard</PageTitle>
     </>
   );
 }

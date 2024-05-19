@@ -1,12 +1,12 @@
 "use client";
-import { logout } from "@/actions/logout";
+import { logout } from "@/actions/auth/logout";
+import Icon from "@/components/Icon";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { PropsWithChildren } from "react";
+import Breadcrumbs from "./Breadcrumbs";
+import Hamburger from "./Hamburger";
 
-export default function Topbar({
-  title,
-}: PropsWithChildren<{ title: string }>) {
+export default function Topbar() {
   const router = useRouter();
 
   async function handleLogout() {
@@ -23,15 +23,41 @@ export default function Topbar({
   }
 
   return (
-    <header className="bg-surface1 w-full flex items-center justify-between">
-      <h1 className="font-semibold text-2xl">{title}</h1>
-      <ul className="flex gap-8">
-        <li>
-          <Link href={{ pathname: "/" }}>Shop</Link>
+    <header className="w-full flex flex-wrap gap-4 sm:flex-row justify-between z-10 px-4 sm:px-6 md:px-8 py-6">
+      <Breadcrumbs
+        separator={<span> / </span>}
+        activeClasses="!text-indigo-600"
+        listClasses="hover:underline not-first:ml-2 mr-2 font-bold text-slate-500"
+        capitalizeLinks
+      />
+
+      <ul className="flex w-full sm:w-auto gap-12">
+        <Hamburger className="block sm:hidden mr-auto" />
+
+        <li className="group">
+          <Link
+            href={{ pathname: "/" }}
+            className="font-medium flex items-center gap-2 group-hover:text-indigo-600"
+          >
+            <Icon
+              name="Store"
+              size={22}
+              className="group-hover:stroke-indigo-600"
+            />
+          </Link>
         </li>
-        <li>
+        <li className="group">
           <form action={handleLogout}>
-            <button type="submit">Logout</button>
+            <button
+              type="submit"
+              className="font-medium flex items-center gap-3 group-hover:text-indigo-600"
+            >
+              <Icon
+                name="LogOut"
+                size={22}
+                className="group-hover:stroke-indigo-600"
+              />
+            </button>
           </form>
         </li>
       </ul>
