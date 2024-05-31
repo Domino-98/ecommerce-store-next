@@ -9,9 +9,9 @@ if (config.APP_ENV === "production") {
 export default defineConfig({
     schema: "./src/lib/database/schema.ts",
     out: "./drizzle",
-    driver: "pg",
+    dialect: 'postgresql',
     dbCredentials: {
-        connectionString: config.POSTGRES_URL + sslmode
+        url: config.POSTGRES_URL + sslmode
     },
     verbose: true,
     strict: true
