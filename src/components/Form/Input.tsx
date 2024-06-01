@@ -1,6 +1,6 @@
 "use client";
-import { PropsWithChildren, useState } from "react";
-import { UseFormRegister } from "react-hook-form";
+import { ChangeEvent, PropsWithChildren, useState } from "react";
+import { FieldError, UseFormRegister } from "react-hook-form";
 import Icon from "../Icon";
 import clsx from "clsx";
 import { icons } from "lucide-react";
@@ -13,14 +13,18 @@ export default function FormInput({
   icon,
   isPassword,
   register,
+  onInput,
+  onFocus,
 }: PropsWithChildren<{
   label: string;
   name: string;
   type: string;
-  error: any;
+  error?: FieldError;
   icon?: keyof typeof icons;
   isPassword?: boolean;
   register?: UseFormRegister<any>;
+  onInput?: (event: ChangeEvent<HTMLInputElement>) => void;
+  onFocus?: (event: ChangeEvent<HTMLInputElement>) => void;
 }>) {
   const [isVisible, setIsVisible] = useState(false);
   const inputType = isPassword ? (isVisible ? "text" : "password") : type;
@@ -45,6 +49,8 @@ export default function FormInput({
             "!pl-10": icon,
           })}
           {...register?.(name)}
+          onInput={onInput}
+          onFocus={onFocus}
         />
         {isPassword && (
           <div
