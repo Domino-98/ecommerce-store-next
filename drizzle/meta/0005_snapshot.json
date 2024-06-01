@@ -1,10 +1,8 @@
 {
-  "id": "5f0b63c7-0bdb-4ab0-b180-fa5af3fab8a3",
-  "prevId": "93fd64c1-f710-405d-8cbf-d0205b0614b8",
-  "version": "5",
-  "dialect": "pg",
+  "version": "6",
+  "dialect": "postgresql",
   "tables": {
-    "email_verification": {
+    "public.email_verification": {
       "name": "email_verification",
       "schema": "",
       "columns": {
@@ -38,21 +36,21 @@
         "email_verification_user_id_user_id_fk": {
           "name": "email_verification_user_id_user_id_fk",
           "tableFrom": "email_verification",
-          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "oauth_account": {
+    "public.oauth_account": {
       "name": "oauth_account",
       "schema": "",
       "columns": {
@@ -104,29 +102,29 @@
         "oauth_account_user_id_user_id_fk": {
           "name": "oauth_account_user_id_user_id_fk",
           "tableFrom": "oauth_account",
-          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "oauth_account_provider_user_id_unique": {
           "name": "oauth_account_provider_user_id_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "provider_user_id"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
-    "password_reset_token": {
+    "public.password_reset_token": {
       "name": "password_reset_token",
       "schema": "",
       "columns": {
@@ -166,21 +164,21 @@
         "password_reset_token_user_id_user_id_fk": {
           "name": "password_reset_token_user_id_user_id_fk",
           "tableFrom": "password_reset_token",
-          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "session": {
+    "public.session": {
       "name": "session",
       "schema": "",
       "columns": {
@@ -208,21 +206,21 @@
         "session_user_id_user_id_fk": {
           "name": "session_user_id_user_id_fk",
           "tableFrom": "session",
-          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "user": {
+    "public.user": {
       "name": "user",
       "schema": "",
       "columns": {
@@ -277,27 +275,30 @@
       "uniqueConstraints": {
         "user_email_unique": {
           "name": "user_email_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "email"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     }
   },
   "enums": {
-    "role": {
+    "public.role": {
       "name": "role",
-      "values": {
-        "USER": "USER",
-        "ADMIN": "ADMIN"
-      }
+      "schema": "public",
+      "values": [
+        "USER",
+        "ADMIN"
+      ]
     }
   },
   "schemas": {},
   "_meta": {
-    "columns": {},
     "schemas": {},
-    "tables": {}
-  }
+    "tables": {},
+    "columns": {}
+  },
+  "id": "5f0b63c7-0bdb-4ab0-b180-fa5af3fab8a3",
+  "prevId": "93fd64c1-f710-405d-8cbf-d0205b0614b8"
 }

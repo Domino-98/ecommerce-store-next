@@ -1,4 +1,5 @@
-import { boolean, pgEnum, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+import { AnyPgColumn, boolean, pgEnum, pgTable, text, timestamp, uuid, serial } from "drizzle-orm/pg-core";
 
 export const userRoles = pgEnum('role', ['USER', 'ADMIN']);
 
@@ -59,3 +60,25 @@ export const sessionTable = pgTable("session", {
         mode: "date"
     }).notNull()
 });
+
+export const categoryTable = pgTable('category', {
+    id: uuid('id').defaultRandom().primaryKey(),
+    name: text('name').notNull(),
+    description: text('description'),
+    slug: text('slug').notNull().unique(),
+    parentId: uuid('parentId').references((): AnyPgColumn => categoryTable.id),
+    image: text('image'),
+    createdAt: timestamp('createdAt').defaultNow().notNull(),
+    updatedAt: timestamp('updatedAt').defaultNow().notNull()
+});
+
+export const categoryRelation = relations(categoryTable, ({ many, one }) => ({
+    parent: one(categoryTable, {
+        fields: [categoryTable.parentId],
+        references: [categoryTable.id],
+        relationName: "subcategories"
+    }),
+    subcategories: many(categoryTable, { relationName: "subcategories" }),
+}));
+
+export type Category = typeof categoryTable.$inferSelect;
