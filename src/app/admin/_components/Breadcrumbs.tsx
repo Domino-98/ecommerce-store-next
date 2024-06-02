@@ -39,7 +39,7 @@ export default function Breadcrumbs({
         return (
           <Fragment key={index}>
             <li className={itemClasses}>
-              <Link href={href}>{itemLink}</Link>
+              <Link href={href}>{itemLink.replace("-", " ")}</Link>
             </li>
             {pathNames.length !== index + 1 && separator}
           </Fragment>

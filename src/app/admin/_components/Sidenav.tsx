@@ -42,6 +42,12 @@ export default function Sidenav() {
         >
           Products
         </SidebarItem>
+        <SidebarItem
+          href={{ pathname: "/admin/dashboard/product-categories" }}
+          icon="Layers3"
+        >
+          Categories
+        </SidebarItem>
         {/* <SidebarItem
           href={{ pathname: "/admin/dashboard/orders" }}
           icon="BaggageClaim"

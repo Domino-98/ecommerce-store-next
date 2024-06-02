@@ -3,7 +3,7 @@
 import {
   ChangeEvent,
   PropsWithChildren,
-  useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -11,7 +11,6 @@ import { FieldError, UseFormRegister } from "react-hook-form";
 import clsx from "clsx";
 import Image from "next/image";
 import Action from "../Action";
-import { CategoryInputs } from "@/app/admin/dashboard/products/_components/CategoryForm";
 
 export default function FileUpload({
   label,
@@ -21,23 +20,20 @@ export default function FileUpload({
   multiple = false,
 }: PropsWithChildren<{
   label: string;
-  name: keyof CategoryInputs;
-  register: UseFormRegister<CategoryInputs>;
+  name: string;
+  register: UseFormRegister<any>;
   error?: FieldError;
   multiple?: boolean;
 }>) {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>("");
+
+  const imagePreview = useMemo(() => {
+    return selectedImage ? URL.createObjectURL(selectedImage) : "";
+  }, [selectedImage]);
 
   const imageInputRef = useRef<HTMLInputElement | null>(null);
 
   const { ref, ...rest } = register(name);
-
-  useEffect(() => {
-    selectedImage
-      ? setImagePreview(URL.createObjectURL(selectedImage))
-      : setImagePreview("");
-  }, [selectedImage]);
 
   function imageChange(e: ChangeEvent<HTMLInputElement>) {
     const files = (e.target as HTMLInputElement).files;
@@ -80,7 +76,7 @@ export default function FileUpload({
               alt="Category thumb"
               className="rounded-md border border-gray-500"
               fill
-              objectFit="cover"
+              style={{ objectFit: "cover" }}
             />
           </div>
           <Action
