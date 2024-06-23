@@ -30,13 +30,18 @@ const config: Config = {
       },
       boxShadow: {
         primary: "0 4px 6px -1px rgb(var(--background-color-200) / 20%), 0 2px 4px -1px rgb(var(--background-color-200) / 10%)",
+        shadowBorder: "rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px"
       }
     },
   },
   plugins: [
     plugin(function ({ addVariant }: { addVariant: Function }) {
       addVariant('not-first', '&:not(:first-child)')
+      addVariant('not-last', '&:not(:last-child)')
     })
   ],
+  future: {
+    hoverOnlyWhenSupported: true
+  }
 };
 export default config;

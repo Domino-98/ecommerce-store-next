@@ -1,5 +1,5 @@
 import PageTitle from "@/app/admin/_components/PageTitle";
-import { Card } from "@/app/admin/_components/ui/Card";
+import { Card } from "@/components/UI/Card";
 import CategoryForm from "../_components/CategoryForm";
 import { db } from "@/lib/database/db";
 
@@ -10,7 +10,7 @@ export default async function NewCategoryPage() {
     <>
       <PageTitle>New category</PageTitle>
       <Card className="mt-4">
-        <CategoryForm categories={categories} />
+        <CategoryForm availableCategories={categories} />
       </Card>
     </>
   );

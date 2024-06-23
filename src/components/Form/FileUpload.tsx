@@ -10,7 +10,7 @@ import {
 import { FieldError, UseFormRegister } from "react-hook-form";
 import clsx from "clsx";
 import Image from "next/image";
-import Action from "../Action";
+import Icon from "../Icon";
 
 export default function FileUpload({
   label,
@@ -18,18 +18,27 @@ export default function FileUpload({
   register,
   error,
   multiple = false,
+  imageUrl,
+  onImageChange,
 }: PropsWithChildren<{
   label: string;
   name: string;
   register: UseFormRegister<any>;
   error?: FieldError;
   multiple?: boolean;
+  imageUrl?: string | null;
+  onImageChange?: () => void;
 }>) {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [currentImage, setCurrentImage] = useState(imageUrl);
 
   const imagePreview = useMemo(() => {
-    return selectedImage ? URL.createObjectURL(selectedImage) : "";
-  }, [selectedImage]);
+    return selectedImage
+      ? URL.createObjectURL(selectedImage)
+      : currentImage
+      ? currentImage
+      : "";
+  }, [selectedImage, currentImage]);
 
   const imageInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -37,16 +46,17 @@ export default function FileUpload({
 
   function imageChange(e: ChangeEvent<HTMLInputElement>) {
     const files = (e.target as HTMLInputElement).files;
-    if (files && files.length > 0) {
-      setSelectedImage(files[0]);
-    } else {
-      setSelectedImage(null);
-    }
+    files && files.length > 0
+      ? setSelectedImage(files[0])
+      : setSelectedImage(null);
+    onImageChange?.();
   }
 
   function removeSelectedImage() {
     imageInputRef.current!.value = "";
     setSelectedImage(null);
+    setCurrentImage(null);
+    onImageChange?.();
   }
 
   return (
@@ -70,24 +80,28 @@ export default function FileUpload({
       </div>
       {imagePreview && (
         <div className="flex flex-col gap-2 items-start">
-          <div className="relative w-[150px] h-[150px]">
+          <div className="relative w-[200px] h-[150px]">
             <Image
               src={imagePreview}
               alt="Category thumb"
-              className="rounded-md border border-gray-500"
+              className="rounded-lg"
               fill
               style={{ objectFit: "cover" }}
+              sizes="100%"
+              priority
             />
+            <button
+              type="button"
+              className="flex items-center justify-center w-6 h-6 absolute top-2 right-2 rounded-full cursor-pointer bg-white group"
+            >
+              <Icon
+                size={16}
+                className="group-hover:text-red-500"
+                onClick={removeSelectedImage}
+                name="X"
+              />
+            </button>
           </div>
-          <Action
-            className="text-sm"
-            variant="primary-outline"
-            actiontype="button"
-            onClick={removeSelectedImage}
-            type="button"
-          >
-            Remove image
-          </Action>
         </div>
       )}
       {error && <p className="text-sm text-red-500">{error.message}</p>}

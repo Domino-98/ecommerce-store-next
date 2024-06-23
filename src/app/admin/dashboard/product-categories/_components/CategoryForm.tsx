@@ -1,13 +1,13 @@
 "use client";
 
-import { createCategory } from "@/app/admin/_actions/categories";
+import { createCategory, editCategory } from "@/app/admin/_actions/categories";
 import { categorySchema } from "@/app/admin/_lib/validation-schemas";
 import Action from "@/components/Action";
 import FileUpload from "@/components/Form/FileUpload";
 import FormInput from "@/components/Form/Input";
 import FormSelect from "@/components/Form/Select";
 import FormTextarea from "@/components/Form/Textarea";
-import { Category } from "@/lib/database/schema";
+import { Category, CategoryWithParent } from "@/lib/database/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, useState, useTransition } from "react";
@@ -23,9 +23,11 @@ export type CategoryInputs = {
 };
 
 export default function CategoryForm({
-  categories,
+  availableCategories,
+  currentCategory,
 }: {
-  categories: Category[];
+  availableCategories: Category[];
+  currentCategory?: CategoryWithParent;
 }) {
   const [isPending, startTransition] = useTransition();
   const {
@@ -37,15 +39,21 @@ export default function CategoryForm({
   } = useForm<CategoryInputs>({
     resolver: zodResolver(categorySchema),
     defaultValues: {
-      parentId: "",
+      slug: currentCategory?.slug || "",
+      description: currentCategory?.description || "",
+      name: currentCategory?.name || "",
+      parentId: currentCategory?.parent?.id || "",
     },
   });
   const [isSlugFocused, setIsSlugFocused] = useState(false);
+  const [isImageChanged, setIsImageChanged] = useState(false);
   const router = useRouter();
 
-  async function handleCategoryAdd(formData: FormData) {
+  async function handleCategory(formData: FormData) {
     startTransition(async () => {
-      const res = await createCategory(formData);
+      const res = !currentCategory
+        ? await createCategory(formData)
+        : await editCategory(formData, isImageChanged, currentCategory);
       if (res?.error) {
         toast.error(res.error);
       } else {
@@ -67,16 +75,20 @@ export default function CategoryForm({
         formData.append(key, val);
       }
     }
-    handleCategoryAdd(formData);
+    handleCategory(formData);
   };
 
   const categoriesOptions = [
     { value: "", label: "None" },
-    ...categories.map((category) => ({
+    ...availableCategories.map((category) => ({
       value: category.id,
       label: category.name,
     })),
   ];
+
+  const selectedParentIndex = categoriesOptions.findIndex(
+    (cat) => cat.value === currentCategory?.parent?.id
+  );
 
   function handleSlugChange(event: ChangeEvent<HTMLInputElement>) {
     if (!isSlugFocused) {
@@ -123,13 +135,17 @@ export default function CategoryForm({
         name="parentId"
         options={categoriesOptions}
         control={control}
-        defaultValue={categoriesOptions[0]}
+        defaultValue={
+          categoriesOptions[selectedParentIndex] || categoriesOptions[0]
+        }
       />
       <FileUpload
         name="image"
         label="Image"
         register={register}
         error={errors.image}
+        imageUrl={currentCategory?.image}
+        onImageChange={() => setIsImageChanged(true)}
       />
 
       <Action
@@ -139,7 +155,9 @@ export default function CategoryForm({
         className="mt-4"
         disabled={isPending}
       >
-        {isPending ? "Adding category..." : "Add category"}
+        {isPending
+          ? `${currentCategory ? "Editing" : "Adding"} category...`
+          : `${currentCategory ? "Edit" : "Add"} category`}
       </Action>
     </form>
   );

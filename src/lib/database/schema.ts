@@ -80,5 +80,3 @@ export const categoryRelation = relations(categoryTable, ({ many, one }) => ({
     }),
     subcategories: many(categoryTable, { relationName: "subcategories" }),
 }));
-
-export type Category = typeof categoryTable.$inferSelect;
