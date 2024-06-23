@@ -32,7 +32,7 @@ export default function Topbar() {
       />
 
       <ul className="flex w-full sm:w-auto gap-12">
-        <Hamburger className="block sm:hidden mr-auto" />
+        <Hamburger className="block lg:hidden mr-auto" />
 
         <li className="group">
           <Link

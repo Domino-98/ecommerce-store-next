@@ -16,7 +16,7 @@ export default function Sidenav() {
 
   return (
     <aside
-      className={`min-h-[calc(100vh-48px)] fixed transform w-[calc(100%-32px)] sm:translate-x-0 sm:sticky sm:max-w-[200px] md:max-w-[250px] z-[100] top-0 rounded-2xl overflow-hidden my-6 sm:ml-8 bg-surface shadow-primary transition ${
+      className={`min-h-[calc(100vh-48px)] fixed transform w-[calc(100%-32px)] lg:translate-x-0 lg:sticky lg:max-w-[250px] z-[100] top-0 shrink-0 rounded-2xl overflow-hidden my-6 lg:ml-8 bg-surface shadow-primary transition ${
         isOpen ? "translate-x-0 mx-4" : "-translate-x-full"
       }`}
     >
@@ -26,7 +26,7 @@ export default function Sidenav() {
         <Icon
           onClick={handleNavClose}
           name="X"
-          className="absolute right-4 cursor-pointer block sm:hidden"
+          className="absolute right-4 cursor-pointer block lg:hidden"
         />
       </div>
 

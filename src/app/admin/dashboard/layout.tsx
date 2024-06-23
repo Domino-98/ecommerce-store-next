@@ -15,7 +15,7 @@ export default async function AdminLayout({
   return (
     <main className="flex">
       <Sidenav />
-      <div className="flex flex-col flex-1">
+      <div className="flex flex-col flex-1 w-full lg:w-auto min-w-0">
         <Topbar />
         <div className="px-4 sm:px-6 md:px-8 lg:px-10 py-4 sm:py-6">
           {children}
