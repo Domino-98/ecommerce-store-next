@@ -19,15 +19,19 @@ export async function createGoogleAuthorizationURL() {
         );
 
         cookies().set("codeVerifier", codeVerifier, {
+            path: "/",
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
+            maxAge: 60 * 10,
+            sameSite: "lax"
         })
 
         cookies().set("state", state, {
+            path: "/",
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
+            maxAge: 60 * 10,
+            sameSite: "lax"
         })
 
         return {

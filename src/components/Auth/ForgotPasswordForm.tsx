@@ -46,7 +46,7 @@ export default function ForgotPasswordForm() {
     if (count === 0) {
       resetCountdown();
     }
-  }, [count]);
+  }, [count, resetCountdown]);
 
   const processForm: SubmitHandler<AuthInputs> = async (data) => {
     let formData = new FormData();

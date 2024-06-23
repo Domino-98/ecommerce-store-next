@@ -44,7 +44,7 @@ export default function LoginForm({
     if (count === 0) {
       resetCountdown();
     }
-  }, [count]);
+  }, [count, resetCountdown]);
 
   const {
     register,
@@ -143,7 +143,7 @@ export default function LoginForm({
             <AuthBtn provider={{ id: "google", name: "Google" }} />
           </div>
           <div className="mt-4 text-center text-sm">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link
               href={{ query: { type: "signup" } }}
               className="text-indigo-500"
