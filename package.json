@@ -20,6 +20,7 @@
     "bcryptjs": "^2.4.3",
     "clsx": "^2.1.0",
     "drizzle-orm": "^0.30.7",
+    "framer-motion": "^11.2.11",
     "jsonwebtoken": "^9.0.2",
     "lucia": "^3.1.1",
     "lucide-react": "^0.372.0",

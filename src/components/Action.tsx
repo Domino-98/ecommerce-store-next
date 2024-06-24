@@ -4,7 +4,7 @@ import { PropsWithChildren } from "react";
 
 type BaseProps = {
   children: React.ReactNode;
-  variant?: "primary" | "primary-outline";
+  variant?: "primary" | "primary-outline" | "danger" | "danger-outline";
   className?: string;
   onClick?: () => void;
 };
@@ -33,6 +33,10 @@ export default function Action({
       variant === "primary",
     "border-indigo-500 bg-transparent text-indigo-500 hover:bg-indigo-500 hover:text-white":
       variant === "primary-outline",
+    "border-red-500 bg-red-500 text-white hover:bg-red-600":
+      variant === "danger",
+    "border-red-500 bg-white text-red-500 hover:bg-red-500":
+      variant === "danger-outline",
   };
 
   if (props.actiontype === "link") {
