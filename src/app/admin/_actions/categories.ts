@@ -144,3 +144,27 @@ export async function editCategory(formData: FormData, isImageChanged: boolean =
         }
     }
 }
+
+export async function deleteCategory(category: Category) {
+    try {
+        if (category.image) {
+            const imageKey = category.image.substring(category.image.lastIndexOf("/") + 1);
+            await utapi.deleteFiles(imageKey);
+        }
+
+        await db.delete(categoryTable).where(eq(categoryTable.id, category.id))
+
+        return {
+            success: `Category "${category.name}" has been deleted!`
+        }
+    } catch (error: unknown) {
+        if (error instanceof UploadThingError) {
+            return {
+                error: "An error occurred while deleting image."
+            }
+        }
+        return {
+            error: "An unknown database error occurred."
+        }
+    }
+}

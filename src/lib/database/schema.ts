@@ -66,7 +66,7 @@ export const categoryTable = pgTable('category', {
     name: text('name').notNull(),
     description: text('description'),
     slug: text('slug').notNull().unique(),
-    parentId: uuid('parentId').references((): AnyPgColumn => categoryTable.id),
+    parentId: uuid('parentId').references((): AnyPgColumn => categoryTable.id, { onDelete: 'set null' }),
     image: text('image'),
     createdAt: timestamp('createdAt').defaultNow().notNull(),
     updatedAt: timestamp('updatedAt').defaultNow().notNull()
